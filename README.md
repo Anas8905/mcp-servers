@@ -43,6 +43,8 @@ This repo is that stack in miniature: **build servers (FastMCP)** + **use them
 📦 mcp-server-deployment → package it as an installable library
 🚪 mcp-server-gateway    → aggregate many servers behind one endpoint
 🐳 mcp-docker-deployment → ship it in a container
+🤖 mcp-server-with-pydantic-ai-agent → consume it from the other side:
+                                        Pydantic AI agents, from raw JSON-RPC to a secured REST API
 ```
 
 | 📁 Repo | What's inside | 🎯 Takeaway |
@@ -53,6 +55,7 @@ This repo is that stack in miniature: **build servers (FastMCP)** + **use them
 | **mcp-server-deployment** 📦 | `agent_terminal_tools`: a FastMCP server of shell & file tools (run command, list, glob, grep, read/write/append/delete/copy/move) packaged as an **installable Python package** (`uv` build + entry point); client demos included, test suite still to come. | How to turn a server into a **package** others can `pip install` / `uvx`. |
 | **mcp-server-gateway** 🚪 | A FastMCP **gateway**: one server that `mount(create_proxy(...))`s several upstreams (DuckDuckGo **+** `agent_terminal_tools`) and re-exposes them over streamable-HTTP. | The **aggregate / proxy pattern** — many servers behind a single endpoint. |
 | **mcp-docker-deployment** 🐳 | The gateway above, **containerised**: `python:3.14-slim` + `uv`, pre-installs a `uvx` community server, runs it over streamable-HTTP. | How to **ship** an MCP server as a Docker image. |
+| **mcp-server-with-pydantic-ai-agent** 🤖 | An 8-step training ladder that builds to a finished app: `01` a hand-rolled **JSON-RPC** dispatcher (the wire format under MCP) → `02` the **MCP protocol** on it (`initialize` / `tools/list` / `tools/call`, JSON-Schema `inputSchema`) → `03` the same server in **FastMCP** + its client → then agents driving it: `04` a single tool that **writes a haiku to a file** (source of the loose `*-haiku.txt` in the folder root) → `05` a **multi-tool loop** (weather → web search → hotel selection) → `06` an **orchestrator/worker** pairing where researcher & actor agents are wrapped as tools of a manager → `07` the agent behind **FastAPI** (`/health` + `/chat`, uvicorn in a thread) → `08` the **JWT & password-hash** building blocks. `main.py` is the product: OAuth2 login, a JWT guard, the MCP `calculate` tool, and a self-test that exercises every auth failure. `reference.py` = the original Colab course the ladder was distilled from. | The **client-side companion** to the server tour — **how an agent consumes MCP tools**, then productises into a secured REST API. |
 
 > 🚧 `weaviate-mcp/` is a vendored **Go** MCP server for the Weaviate vector DB —
 > **WIP, not yet published**, so it's left out of the tour.
