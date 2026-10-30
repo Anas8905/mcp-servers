@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+uv.lock-local/
+
+# secrets / local configuration
+.env
+
+# local Chroma data + repo registry
+db/
