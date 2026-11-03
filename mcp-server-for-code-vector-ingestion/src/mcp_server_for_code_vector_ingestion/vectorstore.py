@@ -8,8 +8,8 @@ Design notes:
 - Ingestion builds **all** documents first, then resets the collection
   (delete + create + add). If anything fails mid-way — say the embedding
   endpoint dies on file 40 of 60 — the previous collection is untouched.
-- ``1 - distance`` is used as a similarity score in
-  ``query_repository``.
+- Collections use cosine distance (``hnsw:space=cosine``) so that
+  ``1 - distance`` in ``query_repository`` is a true cosine similarity.
 """
 
 from __future__ import annotations
@@ -70,6 +70,13 @@ class VectorStore:
                 collection_name=name,
                 embedding_function=self._embeddings,
                 client=self._client,
+                # Chroma defaults to squared L2 (range 0..4 on unit vectors),
+                # which makes ``1 - distance`` go negative for anything below
+                # cosine 0.5. Cosine distance keeps ``1 - distance`` == cosine
+                # similarity, which is what query_repository reports.
+                # Only applied on collection creation; existing collections
+                # must be re-ingested to pick it up.
+                collection_metadata={"hnsw:space": "cosine"},
             )
         return self._collections[name]
 
